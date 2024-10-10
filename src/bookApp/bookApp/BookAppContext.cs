@@ -23,8 +23,7 @@ namespace bookApp
         }
         public void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Customer>()
-                .OwnsOne<Address>(c => c.Address);
+
         }
     }
 }
