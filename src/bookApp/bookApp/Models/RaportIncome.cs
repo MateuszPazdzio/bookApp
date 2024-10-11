@@ -1,9 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace bookApp.Models
 {
     public class RaportIncome
     {
+        [Key]
         public int Id { get; set; }
         public DateOnly IncomeCalculationStartDate { get; set; }
         [Precision(10, 2)]

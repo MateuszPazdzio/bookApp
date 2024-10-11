@@ -27,8 +27,7 @@ namespace bookApp.Migrations
                 name: "Categories",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -40,8 +39,7 @@ namespace bookApp.Migrations
                 name: "Countries",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -56,11 +54,11 @@ namespace bookApp.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IncomeCalculationStartDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    SalesIncome = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    SalesIncome = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
                     SalesQuantity = table.Column<int>(type: "int", nullable: false),
-                    RentalIncome = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    RentalIncome = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
                     RentalQuantity = table.Column<int>(type: "int", nullable: false),
-                    TotalIncome = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    TotalIncome = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -75,7 +73,7 @@ namespace bookApp.Migrations
                     ISBN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PublishYear = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -103,7 +101,7 @@ namespace bookApp.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CountryId = table.Column<int>(type: "int", nullable: false),
+                    CountryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StreetName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     HouseNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -117,6 +115,29 @@ namespace bookApp.Migrations
                         name: "FK_Customers_Countries_CountryId",
                         column: x => x.CountryId,
                         principalTable: "Countries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BookPositions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BookId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LibraryQuantity = table.Column<int>(type: "int", nullable: false),
+                    IsAvailable = table.Column<bool>(type: "bit", nullable: false),
+                    IsTransferableToStore = table.Column<bool>(type: "bit", nullable: false),
+                    SellingPrice = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: true),
+                    RentalFee = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BookPositions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BookPositions_Books_BookId",
+                        column: x => x.BookId,
+                        principalTable: "Books",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -144,19 +165,28 @@ namespace bookApp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TransactionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BookPositionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     RentalDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ExpectedReturnDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ActualReturnDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TransactionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    Value = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Rentals", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Rentals_BookPositions_BookPositionId",
+                        column: x => x.BookPositionId,
+                        principalTable: "BookPositions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Rentals_Transactions_TransactionId",
                         column: x => x.TransactionId,
                         principalTable: "Transactions",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -164,40 +194,40 @@ namespace bookApp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Value = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
-                    TransactionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    BookPositionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TransactionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sales", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Sales_BookPositions_BookPositionId",
+                        column: x => x.BookPositionId,
+                        principalTable: "BookPositions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Sales_Transactions_TransactionId",
                         column: x => x.TransactionId,
                         principalTable: "Transactions",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Fees",
+                name: "LateFees",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     RentalId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Value = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Value = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Fees", x => x.Id);
+                    table.PrimaryKey("PK_LateFees", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Fees_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Fees_Rentals_RentalId",
+                        name: "FK_LateFees_Rentals_RentalId",
                         column: x => x.RentalId,
                         principalTable: "Rentals",
                         principalColumn: "Id",
@@ -205,52 +235,28 @@ namespace bookApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BookPositions",
+                name: "RentalFees",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    BookId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    StoreQuantity = table.Column<int>(type: "int", nullable: false),
-                    LibraryQuantity = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
-                    RentalId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    SaleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    RentalId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookPositions", x => x.Id);
+                    table.PrimaryKey("PK_RentalFees", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BookPositions_Books_BookId",
-                        column: x => x.BookId,
-                        principalTable: "Books",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BookPositions_Rentals_RentalId",
+                        name: "FK_RentalFees_Rentals_RentalId",
                         column: x => x.RentalId,
                         principalTable: "Rentals",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_BookPositions_Sales_SaleId",
-                        column: x => x.SaleId,
-                        principalTable: "Sales",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_BookPositions_BookId",
                 table: "BookPositions",
                 column: "BookId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BookPositions_RentalId",
-                table: "BookPositions",
-                column: "RentalId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BookPositions_SaleId",
-                table: "BookPositions",
-                column: "SaleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Books_AuthorId",
@@ -268,19 +274,31 @@ namespace bookApp.Migrations
                 column: "CountryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Fees_CustomerId",
-                table: "Fees",
-                column: "CustomerId");
+                name: "IX_LateFees_RentalId",
+                table: "LateFees",
+                column: "RentalId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Fees_RentalId",
-                table: "Fees",
-                column: "RentalId");
+                name: "IX_RentalFees_RentalId",
+                table: "RentalFees",
+                column: "RentalId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rentals_BookPositionId",
+                table: "Rentals",
+                column: "BookPositionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Rentals_TransactionId",
                 table: "Rentals",
                 column: "TransactionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sales_BookPositionId",
+                table: "Sales",
+                column: "BookPositionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sales_TransactionId",
@@ -297,16 +315,13 @@ namespace bookApp.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "BookPositions");
-
-            migrationBuilder.DropTable(
-                name: "Fees");
+                name: "LateFees");
 
             migrationBuilder.DropTable(
                 name: "RaportsIncome");
 
             migrationBuilder.DropTable(
-                name: "Books");
+                name: "RentalFees");
 
             migrationBuilder.DropTable(
                 name: "Sales");
@@ -315,16 +330,22 @@ namespace bookApp.Migrations
                 name: "Rentals");
 
             migrationBuilder.DropTable(
-                name: "Authors");
-
-            migrationBuilder.DropTable(
-                name: "Categories");
+                name: "BookPositions");
 
             migrationBuilder.DropTable(
                 name: "Transactions");
 
             migrationBuilder.DropTable(
+                name: "Books");
+
+            migrationBuilder.DropTable(
                 name: "Customers");
+
+            migrationBuilder.DropTable(
+                name: "Authors");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Countries");

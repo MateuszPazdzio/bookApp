@@ -12,7 +12,7 @@ using bookApp;
 namespace bookApp.Migrations
 {
     [DbContext(typeof(BookAppContext))]
-    [Migration("20241010171915_Init")]
+    [Migration("20241011120318_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -49,8 +49,8 @@ namespace bookApp.Migrations
                     b.Property<Guid>("AuthorId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ISBN")
                         .IsRequired()
@@ -81,40 +81,35 @@ namespace bookApp.Migrations
                     b.Property<Guid>("BookId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTransferableToStore")
+                        .HasColumnType("bit");
+
                     b.Property<int>("LibraryQuantity")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal>("RentalFee")
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<Guid?>("RentalId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SaleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("StoreQuantity")
-                        .HasColumnType("int");
+                    b.Property<decimal?>("SellingPrice")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BookId");
-
-                    b.HasIndex("RentalId");
-
-                    b.HasIndex("SaleId");
 
                     b.ToTable("BookPositions");
                 });
 
             modelBuilder.Entity("bookApp.Models.Category", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -127,11 +122,9 @@ namespace bookApp.Migrations
 
             modelBuilder.Entity("bookApp.Models.Country", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -152,8 +145,8 @@ namespace bookApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CountryId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CountryId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -189,32 +182,25 @@ namespace bookApp.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("bookApp.Models.Fee", b =>
+            modelBuilder.Entity("bookApp.Models.LateFee", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("RentalId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<decimal>("Value")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("RentalId")
+                        .IsUnique();
 
-                    b.HasIndex("RentalId");
-
-                    b.ToTable("Fees");
+                    b.ToTable("LateFees");
                 });
 
             modelBuilder.Entity("bookApp.Models.RaportIncome", b =>
@@ -229,19 +215,22 @@ namespace bookApp.Migrations
                         .HasColumnType("date");
 
                     b.Property<decimal>("RentalIncome")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("RentalQuantity")
                         .HasColumnType("int");
 
                     b.Property<decimal>("SalesIncome")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("SalesQuantity")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalIncome")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.HasKey("Id");
 
@@ -257,20 +246,50 @@ namespace bookApp.Migrations
                     b.Property<DateTime>("ActualReturnDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("BookPositionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("ExpectedReturnDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("RentalDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("TransactionId")
+                    b.Property<Guid>("TransactionId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal>("Value")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("BookPositionId");
 
                     b.HasIndex("TransactionId");
 
                     b.ToTable("Rentals");
+                });
+
+            modelBuilder.Entity("bookApp.Models.RentalFee", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RentalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Value")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RentalId")
+                        .IsUnique();
+
+                    b.ToTable("RentalFees");
                 });
 
             modelBuilder.Entity("bookApp.Models.Sale", b =>
@@ -279,7 +298,10 @@ namespace bookApp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("TransactionId")
+                    b.Property<Guid>("BookPositionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TransactionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Value")
@@ -287,6 +309,8 @@ namespace bookApp.Migrations
                         .HasColumnType("decimal(10,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BookPositionId");
 
                     b.HasIndex("TransactionId");
 
@@ -336,14 +360,6 @@ namespace bookApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("bookApp.Models.Rental", null)
-                        .WithMany("BookPositions")
-                        .HasForeignKey("RentalId");
-
-                    b.HasOne("bookApp.Models.Sale", null)
-                        .WithMany("BookPositions")
-                        .HasForeignKey("SaleId");
-
                     b.Navigation("Book");
                 });
 
@@ -358,37 +374,64 @@ namespace bookApp.Migrations
                     b.Navigation("Country");
                 });
 
-            modelBuilder.Entity("bookApp.Models.Fee", b =>
+            modelBuilder.Entity("bookApp.Models.LateFee", b =>
                 {
-                    b.HasOne("bookApp.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("bookApp.Models.Rental", "Rental")
-                        .WithMany()
-                        .HasForeignKey("RentalId")
+                        .WithOne("LateFee")
+                        .HasForeignKey("bookApp.Models.LateFee", "RentalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Customer");
 
                     b.Navigation("Rental");
                 });
 
             modelBuilder.Entity("bookApp.Models.Rental", b =>
                 {
-                    b.HasOne("bookApp.Models.Transaction", null)
+                    b.HasOne("bookApp.Models.BookPosition", "BookPosition")
                         .WithMany("Rentals")
-                        .HasForeignKey("TransactionId");
+                        .HasForeignKey("BookPositionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("bookApp.Models.Transaction", "Transaction")
+                        .WithMany("Rentals")
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BookPosition");
+
+                    b.Navigation("Transaction");
+                });
+
+            modelBuilder.Entity("bookApp.Models.RentalFee", b =>
+                {
+                    b.HasOne("bookApp.Models.Rental", "Rental")
+                        .WithOne("RentalFee")
+                        .HasForeignKey("bookApp.Models.RentalFee", "RentalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Rental");
                 });
 
             modelBuilder.Entity("bookApp.Models.Sale", b =>
                 {
-                    b.HasOne("bookApp.Models.Transaction", null)
+                    b.HasOne("bookApp.Models.BookPosition", "BookPosition")
                         .WithMany("Sales")
-                        .HasForeignKey("TransactionId");
+                        .HasForeignKey("BookPositionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("bookApp.Models.Transaction", "Transaction")
+                        .WithMany("Sales")
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BookPosition");
+
+                    b.Navigation("Transaction");
                 });
 
             modelBuilder.Entity("bookApp.Models.Transaction", b =>
@@ -402,6 +445,13 @@ namespace bookApp.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("bookApp.Models.BookPosition", b =>
+                {
+                    b.Navigation("Rentals");
+
+                    b.Navigation("Sales");
+                });
+
             modelBuilder.Entity("bookApp.Models.Customer", b =>
                 {
                     b.Navigation("Transactions");
@@ -409,12 +459,10 @@ namespace bookApp.Migrations
 
             modelBuilder.Entity("bookApp.Models.Rental", b =>
                 {
-                    b.Navigation("BookPositions");
-                });
+                    b.Navigation("LateFee");
 
-            modelBuilder.Entity("bookApp.Models.Sale", b =>
-                {
-                    b.Navigation("BookPositions");
+                    b.Navigation("RentalFee")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("bookApp.Models.Transaction", b =>
