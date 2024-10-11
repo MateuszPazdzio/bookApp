@@ -1,13 +1,18 @@
-﻿namespace bookApp.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace bookApp.Models
 {
     public class RaportIncome
     {
         public int Id { get; set; }
         public DateOnly IncomeCalculationStartDate { get; set; }
+        [Precision(10, 2)]
         public decimal SalesIncome { get; set; }
         public int SalesQuantity { get; set; }
+        [Precision(10, 2)]
         public decimal RentalIncome { get; set; }
         public int RentalQuantity { get; set; }
+        [Precision(10, 2)]
         public decimal TotalIncome { get; set; }
     }
     //selecting bookpositions which stock value is less than 3, order by StoreQuantity 
