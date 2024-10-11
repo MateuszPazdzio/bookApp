@@ -77,6 +77,7 @@ namespace bookApp.Controllers
             if (id == null)
             {
                 return NotFound();
+
             }
 
             var bookPosition = await _context.BookPositions.FindAsync(id);
