@@ -14,38 +14,20 @@ namespace bookApp.Controllers
     public class AdminController : Controller
     {
         private readonly BookAppContext _context;
+        private readonly IBookPositionRepository _bookPositionRepository;
 
-        public AdminController(BookAppContext context)
+        public AdminController(BookAppContext context, IBookPositionRepository bookPositionRepository)
         {
             _context = context;
+            this._bookPositionRepository = bookPositionRepository;
         }
 
-        // GET: Admin
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             return View(await _context.BookPositions.ToListAsync());
         }
 
-        // GET: Admin/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var bookPosition = await _context.BookPositions
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (bookPosition == null)
-            {
-                return NotFound();
-            }
-
-            return View(bookPosition);
-        }
-
-        // GET: Admin/Create
         [HttpGet("create")]
         public  async Task<IActionResult> Create()
         {
@@ -53,112 +35,22 @@ namespace bookApp.Controllers
             return View(new BookPosition());
         }
 
-        // POST: Admin/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,LibraryQuantity,IsAvailable,IsTransferableToStore,SellingPrice,RentalFee")] BookPosition bookPosition)
+        public async Task<IActionResult> Create(BookPosition bookPosition)
         {
             if (ModelState.IsValid)
             {
-                bookPosition.Id = Guid.NewGuid();
-                _context.Add(bookPosition);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(bookPosition);
-        }
-
-        // GET: Admin/Edit/5
-        [HttpGet("edit/{id}")]
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-
-            }
-
-            var bookPosition = await _context.BookPositions.FindAsync(id);
-            if (bookPosition == null)
-            {
-                return NotFound();
-            }
-            return View(bookPosition);
-        }
-
-        // POST: Admin/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,LibraryQuantity,IsAvailable,IsTransferableToStore,SellingPrice,RentalFee")] BookPosition bookPosition)
-        {
-            if (id != bookPosition.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                var result = this._bookPositionRepository.AddBookPosition(bookPosition);
+                if (result == null)
                 {
-                    _context.Update(bookPosition);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BookPositionExists(bookPosition.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return View(bookPosition);
+
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.Categories = await _context.Categories.ToListAsync();
             return View(bookPosition);
-        }
-
-        // GET: Admin/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var bookPosition = await _context.BookPositions
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (bookPosition == null)
-            {
-                return NotFound();
-            }
-
-            return View(bookPosition);
-        }
-
-        // POST: Admin/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var bookPosition = await _context.BookPositions.FindAsync(id);
-            if (bookPosition != null)
-            {
-                _context.BookPositions.Remove(bookPosition);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool BookPositionExists(Guid id)
-        {
-            return _context.BookPositions.Any(e => e.Id == id);
         }
     }
 }
