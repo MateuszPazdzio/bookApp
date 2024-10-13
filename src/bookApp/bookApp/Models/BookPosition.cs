@@ -33,7 +33,18 @@ namespace bookApp.Models
         [DecimalPrecision(10, 2)]
         [Display(Name = "Cena wypożyczenia za dzień")]
         public decimal RentalFee {  get; set; } //per day
+
+        public DateTime CreationDate { get; set; } = DateTime.Now;
+        public DateTime LastUpdated { get; set; }
         public ICollection<Rental>? Rentals { get; set; }
         public ICollection<Sale>? Sales { get; set; }
+        [Display(Name = "Stan Książki")]
+        public string Condition { get; set; }
+        [Display(Name = "URL Okładki")]
+        public string CoverImageUrl { get; set; }
+        [Display(Name = "Opis")]
+        [Required]
+        [MaxLength(5000)]
+        public string Description { get; set; }
     }
 }

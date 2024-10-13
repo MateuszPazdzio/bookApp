@@ -17,6 +17,9 @@ namespace bookApp
         public DbSet<Sale> Sales{ get; set; }
         public DbSet<Transaction> Transactions{ get; set; }
         public DbSet<RaportIncome> RaportsIncome { get; set; }
+        public DbSet<Condition> Conditions{ get; set; }
+        public DbSet<BookCondition> BookCondition { get; set; }
+
 
         public BookAppContext(DbContextOptions<BookAppContext> dbContextOptions) : base(dbContextOptions)
         {
