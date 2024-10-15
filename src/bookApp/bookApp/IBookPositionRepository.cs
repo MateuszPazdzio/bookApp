@@ -4,6 +4,7 @@ namespace bookApp
 {
     public interface IBookPositionRepository
     {
-        Task<Guid> AddBookPosition(BookPosition bookPosition);
+        Task<string> AddBookPosition(BookPosition bookPosition);
+        List<BookPositionDTO> GetAllBookPositionsSortedByCreationDate();
     }
 }

@@ -7,10 +7,10 @@ namespace bookApp.Models
     public class Book
     {
         [Key]
-        [Required]
-        public Guid Id { get; set; }
-        [Required]
-        public string ISBN { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        //[Required]
+        //public string ISBN { get; set; }
         [Required]
         [MinLength(1)]
         [MaxLength(250)]
@@ -22,6 +22,11 @@ namespace bookApp.Models
         public Category Category { get; set; }
         [Required]
         public int PublishYear {  get; set; }
-
+        [Display(Name = "URL Okładki")]
+        public string CoverImageUrl { get; set; }
+        [Display(Name = "Opis")]
+        [Required]
+        [MaxLength(5000)]
+        public string Description { get; set; }
     }
 }

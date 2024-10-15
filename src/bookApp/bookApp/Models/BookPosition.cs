@@ -3,24 +3,28 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 using System.ComponentModel;
+using Microsoft.AspNetCore.Mvc;
+using System.Runtime.Serialization;
 
 namespace bookApp.Models
 {
     public class BookPosition
     {
         [Key]
-        [Required]
-        public Guid Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        public string ISBN { get; set; }
+
         [Required]
         [ForeignKey("Book")]
-        public Guid BookId {  get; set; }
+        public int BookId {  get; set; }
         public Book Book { get; set; }
 
         //public int StoreQuantity { get; set; }
-        [Required]
-        [Range(0,1000)]
+        //[Required]
+        //[Range(0,1000)]
         [Display(Name = "Dostępne szt.")]
-        public int LibraryQuantity { get; set; }
+        public int? LibraryQuantity => BookInventories?.Count();
         //public bool IsAvailableInStore => StoreQuantity > 0;
         public bool IsAvailable => LibraryQuantity > 0;
         //public bool IsAvailableInLibrary => LibraryQuantity > 0;
@@ -33,18 +37,22 @@ namespace bookApp.Models
         [DecimalPrecision(10, 2)]
         [Display(Name = "Cena wypożyczenia za dzień")]
         public decimal RentalFee {  get; set; } //per day
+        [DecimalPrecision(10, 2)]
+        [Display(Name = "Opłata za 1 dzień opóżnienia")]
+        public decimal LateFee {  get; set; } //per day
 
         public DateTime CreationDate { get; set; } = DateTime.Now;
         public DateTime LastUpdated { get; set; }
         public ICollection<Rental>? Rentals { get; set; }
         public ICollection<Sale>? Sales { get; set; }
-        [Display(Name = "Stan Książki")]
-        public string Condition { get; set; }
-        [Display(Name = "URL Okładki")]
-        public string CoverImageUrl { get; set; }
-        [Display(Name = "Opis")]
+        public ICollection<BookInventory>? BookInventories { get; set; } = new List<BookInventory>();
+        
         [Required]
-        [MaxLength(5000)]
-        public string Description { get; set; }
+        [ForeignKey("BookCover")]
+        public int BookCoverId { get; set; }
+        public BookCover BookCover { get; set; }
+        [NotMapped]
+        public BookInventory BookInventory { get; set; }
+
     }
 }

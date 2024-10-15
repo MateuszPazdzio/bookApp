@@ -1,4 +1,4 @@
-﻿@model IEnumerable<bookApp.Models.BookPosition>
+﻿@model IEnumerable<bookApp.Models.BookPositionDTO>
 
 @{
     ViewData["Title"] = "Index";
@@ -12,12 +12,22 @@
 <table class="table">
     <thead>
         <tr>
+
+@*             <th>
+                @Html.DisplayNameFor(model => model.BookInventory.Inventory_Nr)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ISBN)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.LibraryQuantity)
             </th>
-@*             <th>
-                @Html.DisplayNameFor(model => model.IsAvailable)
-            </th> *@
+            <th>
+                @Html.DisplayNameFor(model => model.Book.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book.Author.Name)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.IsTransferableToStore)
             </th>
@@ -27,33 +37,49 @@
             <th>
                 @Html.DisplayNameFor(model => model.RentalFee)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.BookCover.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreationDate)
+            </th>
+            <th></th> *@
+
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.First().ISBN)</th>
+            <th>@Html.DisplayNameFor(model => model.First().Title)</th>
+            <th>@Html.DisplayNameFor(model => model.First().CoverType)</th>
+            <th>@Html.DisplayNameFor(model => model.First().IsTransferableToStore)</th>
+            <th>@Html.DisplayNameFor(model => model.First().SellingPrice)</th>
+            <th>@Html.DisplayNameFor(model => model.First().RentalFee)</th>
+            <th>@Html.DisplayNameFor(model => model.First().LateFee)</th>
+            <th>@Html.DisplayNameFor(model => model.First().CreationDate)</th>
+            <th>@Html.DisplayNameFor(model => model.First().BookPositionCount)</th>
+        </tr>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.LibraryQuantity)
-            </td>
-@*             <td>
-                @Html.DisplayFor(modelItem => item.IsAvailable)
-            </td> *@
-            <td>
-                @Html.DisplayFor(modelItem => item.IsTransferableToStore)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SellingPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RentalFee)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-controller="Admin" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-controller="Admin" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-controller="Admin" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+
+
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.ISBN)</td>
+                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.CoverType)</td>
+                @* <td>@Html.DisplayFor(modelItem => item.IsTransferableToStore ? "Yes" : "No")</td> *@
+                <td>@Html.DisplayFor(modelItem => item.IsTransferableToStore)</td>
+                <td>@Html.DisplayFor(modelItem => item.SellingPrice.HasValue)</td>
+                @* <td>@Html.DisplayFor(modelItem => item.SellingPrice.HasValue ? item.SellingPrice.Value.ToString("C") : "N/A")</td> *@
+                <td>@Html.DisplayFor(modelItem => item.RentalFee)</td>
+                <td>@Html.DisplayFor(modelItem => item.LateFee)</td>
+                <td>@Html.DisplayFor(modelItem => item.CreationDate)</td>
+                <td>@Html.DisplayFor(modelItem => item.BookPositionCount)</td>
+@*                 <td>
+                    <a asp-action="Edit" asp-controller="Admin" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-controller="Admin" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-controller="Admin" asp-route-id="@item.Id">Delete</a>
+                </td> *@
+            </tr>
 }
     </tbody>
 </table>

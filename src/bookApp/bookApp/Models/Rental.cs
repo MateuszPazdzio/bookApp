@@ -7,7 +7,8 @@ namespace bookApp.Models
     public class Rental
     {
         [Key]
-        public Guid Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
 
         // Foreign key to Customer
         //[ForeignKey("Customer")]
@@ -16,23 +17,24 @@ namespace bookApp.Models
 
         // Foreign key to Transaction
         [ForeignKey("Transaction")]
-        public Guid TransactionId { get; set; }
+        public int TransactionId { get; set; }
         public Transaction Transaction { get; set; }
 
         // Foreign key to BookPosition
         [ForeignKey("BookPosition")]
-        public Guid BookPositionId { get; set; }
+        public int BookPositionId { get; set; }
         public BookPosition BookPosition { get; set; }
 
         public DateTime RentalDate { get; set; }
         public DateTime ExpectedReturnDate { get; set; }
-        public DateTime ActualReturnDate { get; set; }
+        public DateTime? ActualReturnDate { get; set; }
 
-        [Precision(10, 2)]
-        public decimal Value { get; set; }
+        //[Precision(10, 2)]
+        //public decimal Value { get; set; }
 
         // Collection of related LateFee entities
         public LateFee? LateFee { get; set; }
-        public RentalFee RentalFee{ get; set; }
+        public RentalFee RentalFee{ get; set; }//zakoment
+        
     }
 }

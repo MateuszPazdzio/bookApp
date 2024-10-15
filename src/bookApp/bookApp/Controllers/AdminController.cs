@@ -25,13 +25,17 @@ namespace bookApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.BookPositions.ToListAsync());
+            var bookPositions = _bookPositionRepository.GetAllBookPositionsSortedByCreationDate();
+            return View(bookPositions);
+            return View(await _context.BookPositions.Include(bp=>bp.Book).ThenInclude(b=>b.Author).Include(bp=>bp.BookCover).ToListAsync());
         }
 
         [HttpGet("create")]
         public  async Task<IActionResult> Create()
         {
             ViewBag.Categories = await _context.Categories.ToListAsync();
+            ViewBag.Conditions = await _context.Conditions.ToListAsync();
+            ViewBag.BookCovers = await _context.BookCovers.ToListAsync();
             return View(new BookPosition());
         }
 
@@ -39,9 +43,10 @@ namespace bookApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BookPosition bookPosition)
         {
+
             if (ModelState.IsValid)
             {
-                var result = this._bookPositionRepository.AddBookPosition(bookPosition);
+                var result = await this._bookPositionRepository.AddBookPosition(bookPosition);
                 if (result == null)
                 {
                     return View(bookPosition);
@@ -50,6 +55,8 @@ namespace bookApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.Categories = await _context.Categories.ToListAsync();
+            ViewBag.Conditions = await _context.Conditions.ToListAsync();
+            ViewBag.BookCovers = await _context.BookCovers.ToListAsync();
             return View(bookPosition);
         }
     }

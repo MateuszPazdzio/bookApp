@@ -21,7 +21,7 @@ namespace bookApp.Validation
             //    .When(x => 1<2)
             //    .WithMessage("IsTransferableToStore is required when the Sales Price is available for sale.");
 
-            RuleFor(bp => bp.Book.ISBN).Custom((value, context) =>
+            RuleFor(bp => bp.ISBN).Custom((value, context) =>
             {
                 if (value == null)
                 {
@@ -36,11 +36,11 @@ namespace bookApp.Validation
                     return;
                 }
 
-                var bookPosition = _bookAppContext.BookPositions.FirstOrDefault(bp => bp.Book.ISBN == value.Trim());
-                if (bookPosition != null)
-                {
-                    context.AddFailure(@$"Book with {value} already exists");
-                }
+                //var bookPosition = _bookAppContext.BookPositions.FirstOrDefault(bp => bp.ISBN == value.Trim());
+                //if (bookPosition != null)
+                //{
+                //    context.AddFailure(@$"Book with {value} already exists");
+                //}
             });
 
 

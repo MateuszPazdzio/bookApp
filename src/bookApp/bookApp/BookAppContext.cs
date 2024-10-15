@@ -18,7 +18,8 @@ namespace bookApp
         public DbSet<Transaction> Transactions{ get; set; }
         public DbSet<RaportIncome> RaportsIncome { get; set; }
         public DbSet<Condition> Conditions{ get; set; }
-        public DbSet<BookCondition> BookCondition { get; set; }
+        public DbSet<BookInventory> BookInventories{ get; set; }
+        public DbSet<BookCover> BookCovers { get; set; }
 
 
         public BookAppContext(DbContextOptions<BookAppContext> dbContextOptions) : base(dbContextOptions)
@@ -28,6 +29,9 @@ namespace bookApp
         public void OnModelCreating(ModelBuilder modelBuilder)
         {
 
+            modelBuilder.Entity<BookPosition>()
+                .Ignore(bp => bp.BookInventory); // Ignore the navigation property
+                //.Ignore(bp => bp.BookInventoryId);
 
             modelBuilder.Entity<Rental>()
                 .HasOne(r => r.LateFee)

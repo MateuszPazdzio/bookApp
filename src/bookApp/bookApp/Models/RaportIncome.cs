@@ -7,6 +7,7 @@ namespace bookApp.Models
     public class RaportIncome
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public DateOnly IncomeCalculationStartDate { get; set; }
         [Precision(10, 2)]

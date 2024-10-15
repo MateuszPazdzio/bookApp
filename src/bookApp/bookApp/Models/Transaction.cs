@@ -6,9 +6,10 @@ namespace bookApp.Models
     public class Transaction
     {
         [Key]
-        public Guid Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
         [ForeignKey("Customer")]
-        public Guid CustomerId { get; set; }
+        public int CustomerId { get; set; }
 
         public Customer Customer{ get; set; }
         public List<Sale> Sales { get; set; }

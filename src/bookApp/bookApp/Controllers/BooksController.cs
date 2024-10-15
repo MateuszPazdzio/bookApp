@@ -33,22 +33,22 @@ namespace bookApp.Controllers
         }
 
         // GET: Books/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Details(Guid? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var book = await _context.Books
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (book == null)
-            {
-                return NotFound();
-            }
+        //    var book = await _context.Books
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (book == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(book);
-        }
+        //    return View(book);
+        //}
         
     }
 }

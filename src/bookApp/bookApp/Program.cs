@@ -10,9 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IBookPositionRepository,BookPositionRepository>();
-builder.Services.AddDbContext<BookAppContext>(cfg=>
+builder.Services.AddDbContext<BookAppContext>(cfg =>
     cfg.UseSqlServer(@"Server=DESKTOP-15VL6MS\SQLEXPRESS;Database=bookApp;Trusted_Connection=True;TrustServerCertificate=True;"));
+builder.Services.AddScoped<BookInventoryGenerator>();
+builder.Services.AddScoped<IBookPositionRepository,BookPositionRepository>();
+
 
 builder.Services.AddValidatorsFromAssemblyContaining<BookPositionValidator>()
     .AddFluentValidationAutoValidation()

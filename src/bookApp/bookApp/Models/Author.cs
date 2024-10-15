@@ -7,7 +7,8 @@ namespace bookApp.Models
     public class Author
     {
         [Key]
-        public Guid Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
         [MinLength(1)]
         [MaxLength(150)]
         public string Name { get; set; }

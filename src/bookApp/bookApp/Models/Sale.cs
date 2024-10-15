@@ -7,15 +7,18 @@ namespace bookApp.Models
     public class Sale
     {
         [Key]
-        public Guid Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
         [ForeignKey("BookPosition")]
-        public Guid BookPositionId { get; set; }
+        public int BookPositionId { get; set; }
         public BookPosition BookPosition { get; set; }
         [ForeignKey("Transaction")]
-        public Guid TransactionId { get; set; }
+        public int TransactionId { get; set; }
         public Transaction Transaction { get; set; }
         [Precision(10,2)]
         public decimal Value {  get; set; } 
+
+        public bool IsPaid { get; set; }
 
     }
 }
