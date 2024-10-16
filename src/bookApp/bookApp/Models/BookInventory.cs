@@ -20,7 +20,8 @@ namespace bookApp.Models
         public Condition Condition { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.Now;
         public DateTime LastUpdated { get; set; }
-
+        public bool IsRented { get; set; }
+        public bool IsSaled { get; set; }
         //[Required]
         //[ForeignKey("Book")]
         //public Guid BookId { get; set; }

@@ -14,13 +14,16 @@ namespace bookApp.Models
         [Required]
         [MinLength(1)]
         [MaxLength(250)]
+        [Display(Name ="Tytuł")]
         public string Title { get; set; }
         [Required]
-
+        [Display(Name = "Autor")]
         public Author Author { get; set; }
         [Required]
+        [Display(Name = "Kategoria")]
         public Category Category { get; set; }
         [Required]
+        [Display(Name = "Rok publikacji")]
         public int PublishYear {  get; set; }
         [Display(Name = "URL Okładki")]
         public string CoverImageUrl { get; set; }

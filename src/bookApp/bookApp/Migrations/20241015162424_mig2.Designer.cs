@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using bookApp;
 
@@ -11,9 +12,11 @@ using bookApp;
 namespace bookApp.Migrations
 {
     [DbContext(typeof(BookAppContext))]
-    partial class BookAppContextModelSnapshot : ModelSnapshot
+    [Migration("20241015162424_mig2")]
+    partial class mig2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,12 +119,6 @@ namespace bookApp.Migrations
 
                     b.Property<string>("Inventory_Nr")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsRented")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSaled")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("datetime2");
@@ -314,9 +311,6 @@ namespace bookApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateOnly>("IncomeCalculationStartDate")
                         .HasColumnType("date");
 
@@ -422,9 +416,6 @@ namespace bookApp.Migrations
 
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
-
-                    b.Property<DateTime>("SaleDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("TransactionId")
                         .HasColumnType("int");

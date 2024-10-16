@@ -9,6 +9,7 @@ namespace bookApp.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        public DateTime CreationDate { get; set; }
         public DateOnly IncomeCalculationStartDate { get; set; }
         [Precision(10, 2)]
         public decimal SalesIncome { get; set; }

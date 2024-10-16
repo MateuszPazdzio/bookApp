@@ -9,9 +9,12 @@ namespace bookApp.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [ForeignKey("BookPosition")]
-        public int BookPositionId { get; set; }
-        public BookPosition BookPosition { get; set; }
+        //[ForeignKey("BookPosition")]
+        //public int BookPositionId { get; set; }
+        //public BookPosition BookPosition { get; set; }
+        [ForeignKey("BookInventory")]
+        public int BookInventoryId { get; set; }
+        public BookInventory BookInventory { get; set; }
         [ForeignKey("Transaction")]
         public int TransactionId { get; set; }
         public Transaction Transaction { get; set; }
@@ -19,6 +22,8 @@ namespace bookApp.Models
         public decimal Value {  get; set; } 
 
         public bool IsPaid { get; set; }
+
+        public DateTime SaleDate { get; set; }
 
     }
 }

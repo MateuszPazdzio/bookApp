@@ -36,11 +36,11 @@ namespace bookApp.Validation
                     return;
                 }
 
-                //var bookPosition = _bookAppContext.BookPositions.FirstOrDefault(bp => bp.ISBN == value.Trim());
-                //if (bookPosition != null)
-                //{
-                //    context.AddFailure(@$"Book with {value} already exists");
-                //}
+                var bookPosition = _bookAppContext.BookPositions.FirstOrDefault(bp => bp.ISBN == value.Trim());
+                if (bookPosition != null)
+                {
+                    context.AddFailure(@$"Book with {value} already exists");
+                }
             });
 
 

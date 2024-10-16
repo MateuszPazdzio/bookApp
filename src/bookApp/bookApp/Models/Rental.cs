@@ -21,9 +21,12 @@ namespace bookApp.Models
         public Transaction Transaction { get; set; }
 
         // Foreign key to BookPosition
-        [ForeignKey("BookPosition")]
-        public int BookPositionId { get; set; }
-        public BookPosition BookPosition { get; set; }
+        //[ForeignKey("BookPosition")]
+        //public int BookPositionId { get; set; }
+        //public BookPosition BookPosition { get; set; }
+        [ForeignKey("BookInventory")]
+        public int BookInventoryId { get; set; }
+        public BookInventory BookInventory { get; set; }
 
         public DateTime RentalDate { get; set; }
         public DateTime ExpectedReturnDate { get; set; }
